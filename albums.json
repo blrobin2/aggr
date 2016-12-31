@@ -1,0 +1,84 @@
+{
+    "albums": [
+        {
+            "artist": "Chance the Rapper / Jeremih",
+            "album": "Merry Christmas Lil’ Mama",
+            "date": "Dec 30 2016",
+            "scores": {
+                "pitchfork": 8.1
+            }
+        },
+        {
+            "artist": "Worm Ouroboros",
+            "album": "What Graceless Dawn",
+            "date": "Dec 29 2016",
+            "scores": {
+                "pitchfork": 7.5
+            }
+        },
+        {
+            "artist": "Elder Ones",
+            "album": "Holy Science",
+            "date": "Dec 28 2016",
+            "scores": {
+                "pitchfork": 7.8
+            }
+        },
+        {
+            "artist": "Jay Som",
+            "album": "Turn Into",
+            "date": "Dec 23 2016",
+            "scores": {
+                "pitchfork": 8.2
+            }
+        },
+        {
+            "artist": "Pantera",
+            "album": "The Great Southern Trendkill",
+            "date": "Dec 22 2016",
+            "scores": {
+                "pitchfork": 7.7
+            }
+        },
+        {
+            "artist": "Ray Charles",
+            "album": "Swiss Radio Days Vol. 41 - Zurich 1961",
+            "date": "Dec 22 2016",
+            "scores": {
+                "pitchfork": 9
+            }
+        },
+        {
+            "artist": "Gucci Mane",
+            "album": "The Return of East Atlanta Santa",
+            "date": "Dec 21 2016",
+            "scores": {
+                "pitchfork": 7.6
+            }
+        },
+        {
+            "artist": "Jeff Parker",
+            "album": "Slight Freedom",
+            "date": "Dec 19 2016",
+            "scores": {
+                "pitchfork": 8
+            }
+        },
+        {
+            "artist": "Jess Williamson",
+            "album": "Heart Song",
+            "date": "Dec 17 2016",
+            "scores": {
+                "pitchfork": 7.7
+            }
+        },
+        {
+            "artist": "Run the Jewels",
+            "album": "Run the Jewels 3",
+            "date": "Dec 25 2016",
+            "scores": {
+                "metacritic": 86
+            }
+        }
+    ]
+}
