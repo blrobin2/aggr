@@ -7,31 +7,11 @@ const ProgressBar = require('progress');
 const _           = require('lodash');
 const jsonfile    = require('jsonfile');
 const express     = require('express');
-const app = express();
+const app         = express();
 const parser      = new xml2js.Parser();
 parser.on('err', console.error);
 
 app.use(express.static('public'));
-
-app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname + '/index.html'));
-});
-
-app.get('/generate', function (req, res) {
-  Promise.all([
-    getPitchforkReviews(),
-    getMetacriticReviews(),
-    getCosReviews(),
-    getStereogumReviews()
-  ])
-  .then(() =>
-    writeJson('./public/albums.json', {albums: _.uniqBy(allAlbums, 'album')}))
-  .then(reply => res.send(reply));
-});
-
-app.listen(process.env.PORT || 8080);
-
-/// HELPERS
 
 const getXmlParse = (url, title) =>
   new Promise((res, rej) =>
@@ -98,6 +78,11 @@ let allAlbums = [];
 const buildReviewCollector = (url, title, reducer) =>
   getXmlParse(url, title)
     .then(xmlObj => {
+      if (typeof xmlObj === 'undefined') {
+        console.log('I am fucking undefined');
+      } else {
+        console.log('I am not fucking undefined');
+      }
       const collection  = items(xmlObj);
       const urlPromises = collection.map(getUrlPromise);
 
@@ -147,7 +132,7 @@ const pitchforkReducer = (results, collection) =>
     const score   = parseFloat(html.$('.score').html());
     const pubDate = getPubDate(collection[i]);
 
-    if (score > 8.0
+    if (score > 7.8
       && today.getMonth() === pubDate.getMonth()
     ) {
       const [artist, album] = collection[i].title[0].split(': ');
@@ -163,7 +148,7 @@ const pitchforkReducer = (results, collection) =>
 
 const cosReducer = (results, items) =>
   results.reduce((acc, html, i) => {
-    const acceptedScale = ['B+', 'A-', 'A', 'A+'];
+    const acceptedScale = ['B', 'B+', 'A-', 'A', 'A+'];
     const score = html.$('.grade-badge').html();
     const pubDate = getPubDate(items[i]);
 
@@ -225,3 +210,23 @@ const getStereogumReviews = () =>
     'stereogum',
     stereogumReucer
   );
+
+
+// Routes
+
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname + '/index.html'));
+});
+
+app.listen(process.env.PORT || 8080);
+
+// Promise.all([
+//     getPitchforkReviews(),
+//     //getMetacriticReviews(),
+//     getCosReviews(),
+//     getStereogumReviews()
+//   ])
+//   .then(() =>
+//     writeJson('./public/albums.json', {albums: _.uniqBy(allAlbums, 'album')}),
+//     console.error)
+//   .then(reply => console.log(reply));
