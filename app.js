@@ -1,12 +1,37 @@
 const http        = require('http');
+const path        = require('path');
 const xml2js      = require('xml2js');
 const concat      = require('concat-stream');
 const jsdom       = require('jsdom');
 const ProgressBar = require('progress');
 const _           = require('lodash');
 const jsonfile    = require('jsonfile');
+const express     = require('express');
+const app = express();
 const parser      = new xml2js.Parser();
 parser.on('err', console.error);
+
+app.use(express.static('public'));
+
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname + '/index.html'));
+});
+
+app.get('/generate', function (req, res) {
+  Promise.all([
+    getPitchforkReviews(),
+    getMetacriticReviews(),
+    getCosReviews(),
+    getStereogumReviews()
+  ])
+  .then(() =>
+    writeJson('./public/albums.json', {albums: _.uniqBy(allAlbums, 'album')}))
+  .then(reply => res.send(reply));
+});
+
+app.listen(8080);
+
+/// HELPERS
 
 const getXmlParse = (url, title) =>
   new Promise((res, rej) =>
@@ -200,13 +225,3 @@ const getStereogumReviews = () =>
     'stereogum',
     stereogumReucer
   );
-
-Promise.all([
-  getPitchforkReviews(),
-  getMetacriticReviews(),
-  getCosReviews(),
-  getStereogumReviews()
-])
-.then(() =>
-  writeJson('./albums.json', {albums: _.uniqBy(allAlbums, 'album')}))
-.then(res => console.log(res));
