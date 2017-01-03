@@ -29,7 +29,7 @@ app.get('/generate', function (req, res) {
   .then(reply => res.send(reply));
 });
 
-app.listen(8080);
+app.listen(process.env.PORT || 8080);
 
 /// HELPERS
 
