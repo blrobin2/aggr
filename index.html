@@ -22,7 +22,6 @@
           <th>Date</th>
           <th>Artist</th>
           <th>Album</th>
-          <th>Scores</th>
         </tr>
       </thead>
       <tbody>
@@ -31,12 +30,6 @@
             <td>{{date}}</td>
             <td>{{artist}}</td>
             <td>{{album}}</td>
-            <td>
-            {{#each scores}}
-              <strong>{{@key}}</strong>: {{this}}
-              <br>
-            {{/each}}
-            </td>
           </tr>
         {{/each}}
       </tbody>
