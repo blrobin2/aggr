@@ -130,10 +130,12 @@ const metacriticReducer = (results, collection) =>
 const pitchforkReducer = (results, collection) =>
   results.reduce((acc, html, i) => {
     const score   = parseFloat(html.$('.score').html());
+    const bnmText = html.$('.bnm-txt').html() || '';
     const pubDate = getPubDate(collection[i]);
 
     if (score > 7.8
       && today.getMonth() === pubDate.getMonth()
+      && bnmText !== 'Best new reissue'
     ) {
       const [artist, album] = collection[i].title[0].split(': ');
       return acc.concat({
