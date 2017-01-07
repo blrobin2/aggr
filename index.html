@@ -41,12 +41,42 @@
     const albumsSrc = document.getElementById('albums-template').innerHTML;
     const albumsTmpl = Handlebars.compile(albumsSrc);
     const albumsContainer = document.getElementById('albums');
+    const addToPage = new Event('apply');
+
     fetch('albums.json')
       .then(res => res.json())
-      .then(res => {
+      .then(async res => {
         const sorted = _.sortBy(res.albums, ['date','artist']);
-        albumsContainer.innerHTML = albumsTmpl({albums: sorted});
+        checkSpotify(sorted);
       });
+
+    document.addEventListener('apply', function(e, albums) {
+      albumsContainer.innerHTML = albumsTmpl({albums: albums});
+    })
+
+    async function checkSpotify(albums) {
+      let remainder = [];
+      albums.forEach(async album => {
+        const on_spotify = await availableOnSpotify(album);
+
+        if (on_spotify) {
+          remainder.push(Object.assign({}, album, {spotify: true}));
+        } else {
+          remainder.push(Object.assign({}, album, {spotify: false}));
+        }
+      });
+
+      document.dispatchEvent(addToPage, remainder);
+
+      return remainder;
+    }
+
+    function availableOnSpotify(album) {
+      const query = `${album.artist} ${album.album}`;
+      return fetch(`https://api.spotify.com/v1/search?q=${query}&type=album`).then(res => res.json()).then(search_results => {
+        return search_results.albums.items.length > 0;
+      });
+    }
   </script>
 </body>
 </html>
