@@ -128,9 +128,11 @@ const pitchforkReducer = (results, collection) =>
     const score   = parseFloat(html.$('.score').html());
     const bnmText = html.$('.bnm-txt').html() || '';
     const pubDate = getPubDate(collection[i]);
+    const SUNDAY  = 0;
 
     if (score > 7.8
       && today.getMonth() === pubDate.getMonth()
+      && pubDate.getDay() !== SUNDAY
       && bnmText !== 'Best new reissue'
     ) {
       const [artist, album] = collection[i].title[0].split(': ');
