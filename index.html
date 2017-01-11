@@ -44,7 +44,7 @@
     fetch('albums.json')
       .then(res => res.json())
       .then(res => {
-        const sorted = _.sortBy(res.albums, ['date','artist']);
+        const sorted = _.orderBy(res.albums, ['date','artist'], ['desc', 'asc']);
         albumsContainer.innerHTML = albumsTmpl({albums: sorted});
       });
   </script>
