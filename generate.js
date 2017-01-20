@@ -175,7 +175,7 @@ const stereogumReucer = (items) =>
       const [artist, album] = item.title[0].split(' – ');
       return acc.concat({
         artist: cleanUp(artist),
-        album: cleanUp(album),
+        album: album ? cleanUp(album) : '',
         date: dateString(pubDate)
       });
     }
@@ -213,7 +213,7 @@ const getStereogumReviews = () =>
 
 Promise.all([
     getPitchforkReviews(),
-    getMetacriticReviews(),
+    //getMetacriticReviews(),
     getCosReviews(),
     getStereogumReviews()
   ])
