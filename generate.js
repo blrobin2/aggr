@@ -173,11 +173,13 @@ const stereogumReucer = (items) =>
 
     if (today.getMonth() === pubDate.getMonth()) {
       const [artist, album] = item.title[0].split(' – ');
-      return acc.concat({
-        artist: cleanUp(artist),
-        album: album ? cleanUp(album) : '',
-        date: dateString(pubDate)
-      });
+      if (album) {
+        return acc.concat({
+          artist: cleanUp(artist),
+          album: cleanUp(album),
+          date: dateString(pubDate)
+        });
+      }
     }
 
     return acc;
