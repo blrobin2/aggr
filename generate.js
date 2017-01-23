@@ -104,24 +104,24 @@ const buildCollector = (url, title, reducer) =>
     },
     console.error);
 
-const metacriticReducer = (results, collection) =>
-  results.reduce((acc, html, i) => {
-    const score   = parseInt(html.$('[itemprop=ratingValue]').html());
-    const pubDate = getPubDate(collection[i]);
+// const metacriticReducer = (results, collection) =>
+//   results.reduce((acc, html, i) => {
+//     const score   = parseInt(html.$('[itemprop=ratingValue]').html());
+//     const pubDate = getPubDate(collection[i]);
 
-    if (score > 80
-      && today.getMonth() === pubDate.getMonth()
-    ) {
-      const [album, artist] = collection[i].title[0].split(' by ');
-      return acc.concat({
-        artist: cleanUp(artist),
-        album: cleanUp(album),
-        date: dateString(pubDate)
-      });
-    }
+//     if (score > 80
+//       && today.getMonth() === pubDate.getMonth()
+//     ) {
+//       const [album, artist] = collection[i].title[0].split(' by ');
+//       return acc.concat({
+//         artist: cleanUp(artist),
+//         album: cleanUp(album),
+//         date: dateString(pubDate)
+//       });
+//     }
 
-    return acc;
-  }, []);
+//     return acc;
+//   }, []);
 
 const pitchforkReducer = (results, collection) =>
   results.reduce((acc, html, i) => {
@@ -185,12 +185,56 @@ const stereogumReucer = (items) =>
     return acc;
   }, []);
 
-const getMetacriticReviews = () =>
-  buildReviewCollector(
-    'http://www.metacritic.com/rss/music',
-    'metacritic',
-    metacriticReducer
-  );
+// const getMetacriticReviews = () =>
+//   buildReviewCollector(
+//     'http://www.metacritic.com/rss/music',
+//     'metacritic',
+//     metacriticReducer
+//   );
+
+const getMetacriticReviews = () => {
+  return getjQueryDom('http://www.metacritic.com/browse/albums/release-date/new-releases/date')
+  .then(html => {
+    const albums = [];
+    currentYear  = today.getFullYear();
+
+    html.$('.release_product').each((index, li) => {
+      const album = li
+          .getElementsByClassName('product_title')[0]
+          .getElementsByTagName('a')[0]
+          .innerHTML
+          .trim();
+      const artist = li.getElementsByClassName('product_artist')[0]
+          .getElementsByClassName('data')[0]
+          .innerHTML
+          .trim();
+      const score = li
+          .getElementsByClassName('metascore_w')[0]
+          .innerHTML
+          .trim();
+      const release = li.getElementsByClassName('release_date')[0]
+          .getElementsByClassName('data')[0]
+          .innerHTML
+          .trim();
+      const pubDate = new Date(release);
+      pubDate.setFullYear(currentYear);
+
+      if (parseInt(score) > 80 && pubDate.getMonth() === today.getMonth()) {
+        albums.push({
+          artist: cleanUp(artist),
+          album: cleanUp(album),
+          date: dateString(pubDate)
+        });
+      }
+    });
+
+    console.log(albums);
+
+    allAlbums = allAlbums.concat(albums);
+  }, err => {
+    console.warn(err);
+  });
+}
 
 const getPitchforkReviews = () =>
   buildReviewCollector(
@@ -213,9 +257,11 @@ const getStereogumReviews = () =>
     stereogumReucer
   );
 
+//getMetacriticReviews();
+
 Promise.all([
     getPitchforkReviews(),
-    //getMetacriticReviews(),
+    getMetacriticReviews(),
     getCosReviews(),
     getStereogumReviews()
   ])
