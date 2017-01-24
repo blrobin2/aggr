@@ -74,11 +74,6 @@ let allAlbums = [];
 const buildReviewCollector = (url, title, reducer) =>
   getXmlParse(url, title)
     .then(xmlObj => {
-      if (typeof xmlObj === 'undefined') {
-        console.log('I am fucking undefined');
-      } else {
-        console.log('I am not fucking undefined');
-      }
       const collection  = items(xmlObj);
       const urlPromises = collection.map(getUrlPromise);
 
@@ -228,8 +223,6 @@ const getMetacriticReviews = () => {
       }
     });
 
-    console.log(albums);
-
     allAlbums = allAlbums.concat(albums);
   }, err => {
     console.warn(err);
@@ -256,8 +249,6 @@ const getStereogumReviews = () =>
     'stereogum',
     stereogumReucer
   );
-
-//getMetacriticReviews();
 
 Promise.all([
     getPitchforkReviews(),
