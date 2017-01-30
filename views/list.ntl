@@ -10,7 +10,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-2">
-        <h3>Aggr</h3>
+        <h3>Aggr<br> <small>#title#</small></h3>
         <ul>
           <li><a href="/">Current Month</a></li>
           <li><a href="/january">January</a></li>
@@ -48,7 +48,7 @@
     const albumsSrc = document.getElementById('albums-template').innerHTML;
     const albumsTmpl = Handlebars.compile(albumsSrc);
     const albumsContainer = document.getElementById('albums');
-    fetch('albums.json')
+    fetch('#json#')
       .then(res => res.json())
       .then(res => {
         const sorted = _.orderBy(res.albums, ['date','artist'], ['desc', 'asc']);
