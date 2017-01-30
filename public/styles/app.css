@@ -2,6 +2,10 @@ h3 {
   margin-top: 1em;
 }
 
+h3 small {
+   color: rgba(0,0,0,.3);
+}
+
 ul {
   list-style: none;
   padding-left: 0;
