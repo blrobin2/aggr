@@ -1,37 +1,35 @@
-const path        = require('path');
-const express     = require('express');
-const app         = express();
-const fs          = require('fs');
+const path    = require('path');
+const express = require('express');
+const app     = express();
+const fs      = require('fs');
 
 app.use(express.static('public'));
+app.set('view engine', 'pug');
 
-// Templating
-app.engine('ntl', function (filePath, options, callback) {
-  fs.readFile(filePath, function (err, content) {
-    if (err) return callback(err);
-    const rendered = content.toString()
-      .replace('#title#', options.title)
-      .replace('#json#', options.json);
-
-    return callback(null, rendered);
-  });
-});
-
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ntl');
+const getJson = url =>
+  new Promise((res, rej) =>
+    fs.readFile(path.join(__dirname, 'public', url), (err, content) => {
+      if (err) rej(err);
+      res(JSON.parse(content));
+    })
+  );
 
 // Routes
 app.get('/', function (req, res) {
-  res.render('list', {
-    title: '',
-    json: 'albums.json'
+  getJson('albums.json').then(content => {
+    res.render('list', {
+      title: '',
+      albums: content.albums
+    });
   });
 });
 
 app.get('/january', function (req, res) {
-  res.render('list', {
-    title: 'January',
-    json: 'jan.json'
+  getJson('jan.json').then(content => {
+    res.render('list', {
+      title: 'January',
+      albums: content.albums
+    });
   });
 });
 
