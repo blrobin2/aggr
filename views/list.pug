@@ -1,0 +1,37 @@
+html
+  head
+    title Aggr
+    link(
+      rel="stylesheet",
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css",
+      integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi",
+      crossorigin="anonymous")
+    link(
+      rel="stylesheet",
+      href="styles/app.css")
+
+  body
+    div.container
+      div.row
+        div.col-md-2
+          h3 Aggr
+            | <br>
+            | <small> #{title} </small>
+          ul
+            li: a(href="/") Current Month
+            li: a(href="/january") January
+
+        div.col-md-10
+          table.table.table-striped
+            thead
+              tr
+                th Date
+                th Artist
+                th Album
+
+            tbody
+              each album in albums
+                tr
+                  td #{album.date}
+                  td #{album.artist}
+                  td #{album.album}

@@ -1,38 +1,35 @@
-const path        = require('path');
-const express     = require('express');
-const app         = express();
-const fs          = require('fs');
+const path    = require('path');
+const express = require('express');
+const app     = express();
+const fs      = require('fs');
+const _       = require('lodash');
 
 app.use(express.static('public'));
+app.set('view engine', 'pug');
 
-// Templating
-app.engine('ntl', function (filePath, options, callback) {
-  fs.readFile(filePath, function (err, content) {
-    if (err) return callback(err);
-    const rendered = content.toString()
-      .replace('#title#', options.title)
-      .replace('#json#', options.json);
+const getJson = url =>
+  new Promise((res, rej) =>
+    fs.readFile(path.join(__dirname, 'public', url), (err, content) => {
+      if (err) rej(err);
+      res(_.orderBy(JSON.parse(content).albums, ['date','artist'], ['desc', 'asc']));
+    })
+  );
 
-    return callback(null, rendered);
+const renderAlbums = (res, url, title) =>
+  getJson(url).then(albums => {
+    res.render('list', {
+      title: title,
+      albums: albums
+    });
   });
-});
-
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ntl');
 
 // Routes
 app.get('/', function (req, res) {
-  res.render('list', {
-    title: '',
-    json: 'albums.json'
-  });
+  renderAlbums(res, 'albums.json', '');
 });
 
 app.get('/january', function (req, res) {
-  res.render('list', {
-    title: 'January',
-    json: 'jan.json'
-  });
+  renderAlbums(res, 'jan.json', 'January');
 });
 
 app.listen(process.env.PORT || 8080);
