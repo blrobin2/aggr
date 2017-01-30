@@ -25,7 +25,7 @@ const renderAlbums = (res, url, title) =>
 
 // Routes
 app.get('/', function (req, res) {
-  renderAlbums(res, 'albums.json', '');
+  renderAlbums(res, 'albums.json', 'Current Month');
 });
 
 app.get('/january', function (req, res) {
