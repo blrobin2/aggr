@@ -32,4 +32,8 @@ app.get('/january', function (req, res) {
   renderAlbums(res, 'jan.json', 'January');
 });
 
+app.get('/february', function (req, res) {
+  renderAlbums(res, 'feb.json', 'February');
+});
+
 app.listen(process.env.PORT || 8080);
