@@ -153,7 +153,8 @@ const cosReducer = (results, items) =>
       const [_, artistAlbum] = items[i].title[0].split(': ');
       let [artist, album] = artistAlbum.split(' – ');
       if (!album) {
-        album = '';
+        album = artist;
+        artist = '';
       }
       return acc.concat({
         artist: cleanUp(artist),
