@@ -151,7 +151,10 @@ const cosReducer = (results, items) =>
       && today.getMonth() === pubDate.getMonth()
     ) {
       const [_, artistAlbum] = items[i].title[0].split(': ');
-      const [artist, album] = artistAlbum.split(' – ');
+      let [artist, album] = artistAlbum.split(' – ');
+      if (!album) {
+        album = '';
+      }
       return acc.concat({
         artist: cleanUp(artist),
         album: cleanUp(album),
