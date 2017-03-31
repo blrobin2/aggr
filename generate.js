@@ -261,6 +261,6 @@ Promise.all([
     getStereogumReviews()
   ])
   .then(() =>
-    writeJson('./public/albums.json', {albums: _.uniqBy(allAlbums, 'album')}),
+    writeJson('./public/mar.json', {albums: _.uniqBy(allAlbums, 'album')}),
     console.error)
   .then(reply => console.log(reply));
