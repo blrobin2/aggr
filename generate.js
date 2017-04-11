@@ -257,7 +257,7 @@ const getStereogumReviews = () =>
 Promise.all([
     getPitchforkReviews(),
     getMetacriticReviews(),
-    getCosReviews(),
+    //getCosReviews(),
     getStereogumReviews()
   ])
   .then(() =>
