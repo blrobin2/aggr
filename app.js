@@ -40,4 +40,8 @@ app.get('/march', function (req, res) {
   renderAlbums(res, 'mar.json', 'March');
 });
 
+app.get('/april', function (req, res) {
+  renderAlbums(res, 'apr.json', 'April');
+});
+
 app.listen(process.env.PORT || 8080);
