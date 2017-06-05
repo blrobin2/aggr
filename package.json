@@ -12,13 +12,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.4.1",
     "concat-stream": "^1.6.0",
+    "config": "^1.26.1",
     "express": "^4.14.0",
     "jsdom": "^9.9.1",
     "jsonfile": "^2.4.0",
     "lodash": "^4.17.3",
     "progress": "^1.1.8",
     "pug": "^2.0.0-beta10",
+    "spotify-web-api-node": "^2.4.0",
     "xml2js": "^0.4.17"
   }
 }

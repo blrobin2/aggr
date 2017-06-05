@@ -3,6 +3,14 @@ const express = require('express');
 const app     = express();
 const fs      = require('fs');
 const _       = require('lodash');
+const SpotifyWebApi = require('spotify-web-api-node');
+const config  = require('config');
+const async_iter = require('async');
+
+const spotifyApi = new SpotifyWebApi({
+  clientId: config.get('spotifyClientId'),
+  clientSecret: config.get('spotifyClientSecret')
+});
 
 app.use(express.static('public'));
 app.set('view engine', 'pug');
@@ -19,6 +27,7 @@ const renderAlbums = (res, url, title) =>
   getJson(url).then(albums => {
     res.render('list', {
       title: title,
+      month: url,
       albums: albums
     });
   });
@@ -47,5 +56,39 @@ app.get('/april', function (req, res) {
 app.get('/may', function (req, res) {
   renderAlbums(res, 'may.json', 'May');
 });
+
+
+app.get('/on-spotify', async function (req, res) {
+  mapped_stuff = [];
+  const month = req.query.month || 'albums';
+
+  const [access, month_json] = await Promise.all([
+    spotifyApi.clientCredentialsGrant(),
+    getJson(`${month}.json`)
+  ]);
+
+  spotifyApi.setAccessToken(access.body.access_token);
+
+  async_iter.map(month_json, lookup_album, function(err, mapped_stuff) {
+    res.render('list', {
+      title: 'Test',
+      month: month,
+      albums: mapped_stuff
+    });
+    //res.send(mapped_stuff);
+  });
+});
+
+function lookup_album(album, cb) {
+  spotifyApi.searchAlbums(`${album.artist} ${album.album}`).then(lookup => {
+    if (lookup.body.albums.items.length) {
+       cb(null, Object.assign({}, album, {
+        link: lookup.body.albums.items[0].external_urls.spotify
+      }));
+     } else {
+      cb(null, Object.assign({}, album));
+     }
+  });
+}
 
 app.listen(process.env.PORT || 8080);
