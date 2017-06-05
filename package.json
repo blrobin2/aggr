@@ -1,6 +1,9 @@
 {
   "name": "aggr",
   "version": "1.0.0",
+  "engines": {
+    "node": "7.6.0"
+  },
   "description": "",
   "main": "app.js",
   "scripts": {
