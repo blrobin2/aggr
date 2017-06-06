@@ -75,7 +75,6 @@ app.get('/on-spotify', async function (req, res) {
       month: month,
       albums: mapped_stuff
     });
-    //res.send(mapped_stuff);
   });
 });
 
