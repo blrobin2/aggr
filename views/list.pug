@@ -13,18 +13,10 @@ html
   body
     div.container
       div.row
-        div.col-md-6
+        div.col-md-2
           h3 Aggr
             | <br>
             | <small> #{title} </small>
-        div.col-md-6
-          if title === 'Current Month'
-            a(href="/on-spotify") Check Spotify
-          else
-            a(href=`/on-spotify?month=${title.substring(0,3).toLowerCase()}`) Check Spotify
-      div.row
-        div.col-md-2
-
           ul
             li: a(href="/") Current Month
             li: a(href="/may") May

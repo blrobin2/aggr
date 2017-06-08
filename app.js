@@ -18,65 +18,46 @@ app.set('view engine', 'pug');
 const getJson = url =>
   new Promise((res, rej) =>
     fs.readFile(path.join(__dirname, 'public', url), (err, content) => {
-      if (err) rej(err);
+      if (err) {
+        rej(err);
+        return;
+      }
       res(_.orderBy(JSON.parse(content).albums, ['date','artist'], ['desc', 'asc']));
     })
   );
 
-const renderAlbums = (res, url, title) =>
-  getJson(url).then(albums => {
-    res.render('list', {
-      title: title,
-      month: url,
-      albums: albums
-    });
-  });
-
 // Routes
-app.get('/', function (req, res) {
-  renderAlbums(res, 'albums.json', 'Current Month');
+app.get('*', function (req, res) {
+  const path = req.url.replace('/', '');
+  const file = path ? path.substring(0,3).toLowerCase() : undefined;
+  const title = path ? path.charAt(0).toUpperCase() + path.slice(1) : 'Current Month';
+  renderWithSpotify(res, title, file);
 });
 
-app.get('/january', function (req, res) {
-  renderAlbums(res, 'jan.json', 'January');
-});
+async function renderWithSpotify(res, title, month = 'albums') {
+  try {
+    const [access, month_json] = await Promise.all([
+      spotifyApi.clientCredentialsGrant(),
+      getJson(`${month}.json`)
+    ]);
 
-app.get('/february', function (req, res) {
-  renderAlbums(res, 'feb.json', 'February');
-});
+    spotifyApi.setAccessToken(access.body.access_token);
 
-app.get('/march', function (req, res) {
-  renderAlbums(res, 'mar.json', 'March');
-});
-
-app.get('/april', function (req, res) {
-  renderAlbums(res, 'apr.json', 'April');
-});
-
-app.get('/may', function (req, res) {
-  renderAlbums(res, 'may.json', 'May');
-});
-
-
-app.get('/on-spotify', async function (req, res) {
-  mapped_stuff = [];
-  const month = req.query.month || 'albums';
-
-  const [access, month_json] = await Promise.all([
-    spotifyApi.clientCredentialsGrant(),
-    getJson(`${month}.json`)
-  ]);
-
-  spotifyApi.setAccessToken(access.body.access_token);
-
-  async_iter.map(month_json, lookup_album, function(err, mapped_stuff) {
-    res.render('list', {
-      title: 'Test',
-      month: month,
-      albums: mapped_stuff
+    async_iter.map(month_json, lookup_album, function(err, albums) {
+      if (err) {
+        res.render('error', { error })
+        return
+      }
+      res.render('list', {
+        title,
+        month,
+        albums
+      });
     });
-  });
-});
+  } catch (err) {
+    res.render('error', { error: err.message })
+  }
+}
 
 function lookup_album(album, cb) {
   spotifyApi.searchAlbums(`${album.artist} ${album.album}`).then(lookup => {
