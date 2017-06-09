@@ -128,7 +128,7 @@ const pitchforkReducer = (results, collection) =>
     if (score > 7.8
       && today.getMonth() === pubDate.getMonth()
       && pubDate.getDay() !== SUNDAY
-      && bnmText !== 'Best new reissue'
+      && bnmText != 'Best new reissue'
     ) {
       const [artist, album] = collection[i].title[0].split(': ');
       return acc.concat({
