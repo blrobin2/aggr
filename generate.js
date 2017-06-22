@@ -130,7 +130,11 @@ const pitchforkReducer = (results, collection) =>
       && pubDate.getDay() !== SUNDAY
       && bnmText != 'Best new reissue'
     ) {
-      const [artist, album] = collection[i].title[0].split(': ');
+      let [artist, album] = collection[i].title[0].split(': ');
+      if (!album) {
+        album = artist;
+        artist = '';
+      }
       return acc.concat({
         artist: cleanUp(artist),
         album: cleanUp(album),
