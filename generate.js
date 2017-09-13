@@ -1,4 +1,4 @@
-const http        = require('http');
+const https        = require('https');
 const path        = require('path');
 const xml2js      = require('xml2js');
 const concat      = require('concat-stream');
@@ -11,7 +11,7 @@ parser.on('err', console.error);
 
 const getXmlParse = (url, title) =>
   new Promise((res, rej) =>
-    http.get(url, response => {
+    https.get(url, response => {
       response.on('error', err => rej(err));
 
       // const len = parseInt(response.headers['content-length'], 10);
@@ -196,7 +196,7 @@ const stereogumReucer = (items) =>
 //   );
 
 const getMetacriticReviews = () => {
-  return getjQueryDom('http://www.metacritic.com/browse/albums/release-date/new-releases/date')
+  return getjQueryDom('https://www.metacritic.com/browse/albums/release-date/new-releases/date')
   .then(html => {
     const albums = [];
     currentYear  = today.getFullYear();
@@ -239,7 +239,7 @@ const getMetacriticReviews = () => {
 
 const getPitchforkReviews = () =>
   buildReviewCollector(
-    'http://pitchfork.com/rss/reviews/albums/',
+    'https://pitchfork.com/rss/reviews/albums/',
     'pitchfork',
     pitchforkReducer
   );
@@ -253,7 +253,7 @@ const getCosReviews = () =>
 
 const getStereogumReviews = () =>
   buildCollector(
-    'http://www.stereogum.com/heavy-rotation/feed/',
+    'https://www.stereogum.com/heavy-rotation/feed/',
     'stereogum',
     stereogumReucer
   );
