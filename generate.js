@@ -64,8 +64,10 @@ const getPubDate         = item => new Date(Date.parse(item.pubDate));
 const dateString         = pubDate => pubDate.toDateString().slice(4);
 const toTitleCase        = str => str.replace(/\w\S*/g, txt =>
   txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-const removeSpecialChars = str => str.replace(/[^\w\s]/gi, '');
-const cleanUp            = str => toTitleCase(removeSpecialChars(str));
+const umlatReplacements  = {"ä":"a", "ü":"u", "ö":"o", "ß":"ss"};
+const replaceUmlats      = str => str.replace(/[äöüß]/g, match => umlatReplacements[match]);
+const removeSpecialChars = str => str.replace(/[^\w\s&amp;]/gi, '');
+const cleanUp            = str => toTitleCase(removeSpecialChars(replaceUmlats(str)));
 
 // The final collection of albums
 let allAlbums = [];
