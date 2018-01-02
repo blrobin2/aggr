@@ -28,9 +28,8 @@ const getJson = url =>
 
 // Routes
 app.get('*', function (req, res) {
-  const path = req.url.replace('/', '');
-  const file = path ? path.substring(0,3).toLowerCase() : undefined;
-  const title = path ? path.charAt(0).toUpperCase() + path.slice(1) : 'Current Month';
+  const file = req.url.replace('/', '') || undefined;
+  const title = file ? file.charAt(0).toUpperCase() + file.slice(1) : 'Current Month';
   renderWithSpotify(res, title, file);
 });
 
