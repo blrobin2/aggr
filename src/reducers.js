@@ -67,19 +67,8 @@ const metacriticReducer = html => {
       .getElementsByClassName("product_title")[0]
       .getElementsByTagName("a")[0]
       .innerHTML.trim();
-    // const artist = li
-    //   .getElementsByClassName("product_artist")[0]
-    //   .getElementsByClassName("data")[0]
-    //   .innerHTML.trim();
     const artist = getFromDom(li, "product_artist", "data");
-    // const score = li
-    //   .getElementsByClassName("metascore_w")[0]
-    //   .innerHTML.trim();
     const score = getFromDom(li, "metascore_w");
-    // const release = li
-    //   .getElementsByClassName("release_date")[0]
-    //   .getElementsByClassName("data")[0]
-    //   .innerHTML.trim();
     const release = getFromDom(li, "release_date", "data");
     const pubDate = new Date(release);
     pubDate.setFullYear(currentYear);
@@ -90,8 +79,6 @@ const metacriticReducer = html => {
         album: cleanUp(album),
         date: dateString(pubDate)
       });
-    } else {
-      console.log(album, score);
     }
   });
 
