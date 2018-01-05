@@ -90,6 +90,8 @@ const metacriticReducer = html => {
         album: cleanUp(album),
         date: dateString(pubDate)
       });
+    } else {
+      console.log(album, score);
     }
   });
 
