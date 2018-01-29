@@ -30,6 +30,9 @@ const pitchforkReducer = (results, collection) =>
         album = artist;
         artist = "";
       }
+      if (artist === "Album Review") {
+        [artist, album] = album.split(' - ');
+      }
       return acc.concat({
         artist: cleanUp(artist),
         album: cleanUp(album),
