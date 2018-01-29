@@ -66,14 +66,15 @@ const metacriticReducer = html => {
   const currentYear = today.getFullYear();
 
   html.$(".release_product").each((index, li) => {
-    const album = getFromDom(li, ".product_title", "a");
-    const artist = getFromDom(li, ".product_artist", ".data");
+    const album = getFromDom(li, ".product_title > a");
+    const artist = getFromDom(li, ".product_artist > .data");
     const score = getFromDom(li, ".metascore_w");
-    const release = getFromDom(li, ".release_date", ".data");
+    const release = getFromDom(li, ".release_date > .data");
     const pubDate = new Date(release);
     pubDate.setFullYear(currentYear);
 
     if (parseInt(score) > 80 && cameOutThisMonth(pubDate)) {
+      console.log(artist, album)
       albums.push({
         artist: cleanUp(artist),
         album: cleanUp(album),
