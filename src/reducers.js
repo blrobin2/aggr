@@ -6,8 +6,8 @@ const cameOutThisMonth = pubDate => pubDate.getMonth() === today.getMonth();
 
 const getFromDom = (node, ...elems) => {
   let elem = node;
-  elems.forEach(className => {
-    elem = elem.getElementsByClassName(className)[0];
+  elems.forEach(selector => {
+    elem = elem.querySelector(selector);
   });
   return elem.innerHTML.trim();
 };
@@ -66,13 +66,10 @@ const metacriticReducer = html => {
   const currentYear = today.getFullYear();
 
   html.$(".release_product").each((index, li) => {
-    const album = li
-      .getElementsByClassName("product_title")[0]
-      .getElementsByTagName("a")[0]
-      .innerHTML.trim();
-    const artist = getFromDom(li, "product_artist", "data");
-    const score = getFromDom(li, "metascore_w");
-    const release = getFromDom(li, "release_date", "data");
+    const album = getFromDom(li, ".product_title", "a");
+    const artist = getFromDom(li, ".product_artist", ".data");
+    const score = getFromDom(li, ".metascore_w");
+    const release = getFromDom(li, ".release_date", ".data");
     const pubDate = new Date(release);
     pubDate.setFullYear(currentYear);
 
