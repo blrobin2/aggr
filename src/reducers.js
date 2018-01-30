@@ -1,16 +1,12 @@
 const { cleanUp } = require("./stringCleanUp");
-const { getToday, getPubDate, dateString } = require("./dateFormatting");
+const {
+  getToday,
+  getPubDate,
+  dateString,
+  cameOutThisMonth
+} = require("./dateFormatting");
+const { getFromDom } = require("./read");
 const today = getToday();
-
-const cameOutThisMonth = pubDate => pubDate.getMonth() === today.getMonth();
-
-const getFromDom = (node, ...elems) => {
-  let elem = node;
-  elems.forEach(selector => {
-    elem = elem.querySelector(selector);
-  });
-  return elem.innerHTML.trim();
-};
 
 const pitchforkReducer = (results, collection) =>
   results.reduce((acc, html, i) => {
@@ -21,7 +17,7 @@ const pitchforkReducer = (results, collection) =>
 
     if (
       score > 7.8 &&
-      cameOutThisMonth(pubDate) &&
+      cameOutThisMonth(pubDate, today) &&
       pubDate.getDay() !== SUNDAY &&
       bnmText != "Best new reissue"
     ) {
@@ -31,7 +27,7 @@ const pitchforkReducer = (results, collection) =>
         artist = "";
       }
       if (artist === "Album Review") {
-        [artist, album] = album.split(' - ');
+        [artist, album] = album.split(" - ");
       }
       return acc.concat({
         artist: cleanUp(artist),
@@ -47,7 +43,7 @@ const stereogumReucer = items =>
   items.reduce((acc, item) => {
     const pubDate = getPubDate(item);
 
-    if (cameOutThisMonth(pubDate)) {
+    if (cameOutThisMonth(pubDate, today)) {
       const [artist, album] = item.title[0].split(" – ");
       if (album) {
         return acc.concat({
@@ -66,15 +62,14 @@ const metacriticReducer = html => {
   const currentYear = today.getFullYear();
 
   html.$(".release_product").each((index, li) => {
-    const album = getFromDom(li, ".product_title > a");
-    const artist = getFromDom(li, ".product_artist > .data");
     const score = getFromDom(li, ".metascore_w");
-    const release = getFromDom(li, ".release_date > .data");
-    const pubDate = new Date(release);
+    const pubDate = new Date(getFromDom(li, ".release_date > .data"));
     pubDate.setFullYear(currentYear);
 
-    if (parseInt(score) > 80 && cameOutThisMonth(pubDate)) {
-      console.log(artist, album)
+    if (parseInt(score) > 80 && cameOutThisMonth(pubDate, today)) {
+      const album = getFromDom(li, ".product_title > a");
+      const artist = getFromDom(li, ".product_artist > .data");
+      console.log(artist, album);
       albums.push({
         artist: cleanUp(artist),
         album: cleanUp(album),
@@ -84,7 +79,7 @@ const metacriticReducer = html => {
   });
 
   return albums;
-}
+};
 
 module.exports = {
   pitchforkReducer,

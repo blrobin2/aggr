@@ -29,4 +29,13 @@ const dom = url =>
     })
   );
 
-module.exports = { xml, dom };
+
+const getFromDom = (node, ...elems) => {
+  let elem = node;
+  elems.forEach(selector => {
+    elem = elem.querySelector(selector);
+  });
+  return elem.innerHTML.trim();
+};
+
+module.exports = { xml, dom, getFromDom };
