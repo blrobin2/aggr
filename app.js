@@ -1,39 +1,35 @@
-const path    = require('path');
-const express = require('express');
-const app     = express();
-const fs      = require('fs');
-const _       = require('lodash');
-const SpotifyWebApi = require('spotify-web-api-node');
-const config  = require('config');
-const async_iter = require('async');
+const path = require("path");
+const express = require("express");
+const app = express();
+const fs = require("fs");
+const _ = require("lodash");
+const SpotifyWebApi = require("spotify-web-api-node");
+const config = require("config");
 
 const spotifyApi = new SpotifyWebApi({
-  clientId: config.get('spotifyClientId'),
-  clientSecret: config.get('spotifyClientSecret')
+  clientId: config.get("spotifyClientId"),
+  clientSecret: config.get("spotifyClientSecret")
 });
 
-app.use(express.static('public'));
-app.set('view engine', 'pug');
-
-const getJson = url =>
-  new Promise((res, rej) =>
-    fs.readFile(path.join(__dirname, 'public', url), (err, content) => {
-      if (err) {
-        rej(err);
-        return;
-      }
-      res(_.orderBy(JSON.parse(content).albums, ['date','artist'], ['desc', 'asc']));
-    })
-  );
+app.use(express.static("public"));
+app.set("view engine", "pug");
 
 // Routes
-app.get('*', function (req, res) {
-  const file = req.url.replace('/', '') || undefined;
-  const title = file ? file.charAt(0).toUpperCase() + file.slice(1) : 'Current Month';
+app.get("*", function(req, res) {
+  const file = getFilenameFromUrl(req.url);
+  const title = getTitle(file);
   renderWithSpotify(res, title, file);
 });
 
-async function renderWithSpotify(res, title, month = 'albums') {
+function getFilenameFromUrl(url) {
+  return url.replace("/", "") || undefined;
+}
+
+function getTitle(file) {
+  return file ? file.charAt(0).toUpperCase() + file.slice(1) : "Current Month";
+}
+
+async function renderWithSpotify(res, title, month = "albums") {
   try {
     const [access, month_json] = await Promise.all([
       spotifyApi.clientCredentialsGrant(),
@@ -41,33 +37,48 @@ async function renderWithSpotify(res, title, month = 'albums') {
     ]);
 
     spotifyApi.setAccessToken(access.body.access_token);
+    const albums = await getAlbums(month_json);
 
-    async_iter.map(month_json, lookup_album, function(err, albums) {
-      if (err) {
-        res.render('error', { error })
-        return
-      }
-      res.render('list', {
-        title,
-        month,
-        albums
-      });
+    res.render("list", {
+      title,
+      month,
+      albums
     });
   } catch (err) {
-    res.render('error', { error: err.message })
+    res.render("error", { error: err.message });
   }
 }
 
-function lookup_album(album, cb) {
-  spotifyApi.searchAlbums(`${album.artist} ${album.album}`).then(lookup => {
-    if (lookup.body.albums.items.length) {
-       cb(null, Object.assign({}, album, {
-        link: lookup.body.albums.items[0].external_urls.spotify
-      }));
-     } else {
-      cb(null, Object.assign({}, album));
-     }
-  });
+const getJson = url =>
+  new Promise((res, rej) =>
+    fs.readFile(path.join(__dirname, "public", url), (err, content) => {
+      if (err) {
+        rej(err);
+        return;
+      }
+      res(
+        _.orderBy(
+          JSON.parse(content).albums,
+          ["date", "artist"],
+          ["desc", "asc"]
+        )
+      );
+    })
+  );
+
+async function getAlbums(month_json) {
+  return await Promise.all(month_json.map(lookup));
+}
+
+function lookup(album) {
+  return spotifyApi.searchAlbums(`${album.artist} ${album.album}`).then(
+    lookup =>
+      lookup.body.albums.items.length
+        ? Object.assign({}, album, {
+            link: lookup.body.albums.items[0].external_urls.spotify
+          })
+        : Object.assign({}, album)
+  );
 }
 
 app.listen(process.env.PORT || 8080);
