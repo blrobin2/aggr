@@ -16,28 +16,32 @@ app.set("view engine", "pug");
 
 // Routes
 app.get("*", function(req, res) {
-  const file = getFilenameFromUrl(req.url);
-  const title = getTitle(file);
-  renderWithSpotify(res, title, file);
+  const filename = getFilenameFromUrl(req.url);
+  const title = getTitle(filename);
+  renderWithSpotify(res, title, filename);
 });
 
 function getFilenameFromUrl(url) {
   return url.replace("/", "") || undefined;
 }
 
-function getTitle(file) {
-  return file ? file.charAt(0).toUpperCase() + file.slice(1) : "Current Month";
+function getTitle(filename) {
+  return filename ? toTitleCase(filename) : "Current Month";
+}
+
+function toTitleCase(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 async function renderWithSpotify(res, title, month = "albums") {
   try {
-    const [access, month_json] = await Promise.all([
+    const [access, albumJson] = await Promise.all([
       spotifyApi.clientCredentialsGrant(),
       getJson(`${month}.json`)
     ]);
 
     spotifyApi.setAccessToken(access.body.access_token);
-    const albums = await getAlbums(month_json);
+    const albums = await getAlbumData(albumJson);
 
     res.render("list", {
       title,
@@ -66,8 +70,8 @@ const getJson = url =>
     })
   );
 
-async function getAlbums(month_json) {
-  return await Promise.all(month_json.map(lookup));
+async function getAlbumData(albumJson) {
+  return await Promise.all(albumJson.map(lookup));
 }
 
 function lookup(album) {
