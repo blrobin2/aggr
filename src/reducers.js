@@ -24,6 +24,10 @@ const pitchforkReducer = (results, collection) =>
       bnmText != "Best new reissue"
     ) {
       let [artist, album] = collection[i].title[0].split(": ");
+      if (artist === 'Songs' && album === 'Ohia') {
+        artist = "Songs:Ohia";
+        album = collection[i].title[0].split(": ")[2];
+      }
       if (!album) {
         album = artist;
         artist = "";
