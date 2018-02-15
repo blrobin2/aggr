@@ -8,6 +8,8 @@ const {
 const { getFromDom } = require("./read");
 const today = getToday();
 
+const bandsWithColons = ["Songs: Ohia"];
+
 const pitchforkReducer = (results, collection) =>
   results.reduce((acc, html, i) => {
     const score = parseFloat(html.$(".score").html());
