@@ -18,21 +18,14 @@ html
             | <br>
             | <small> #{title} </small>
           ul
+            li: h5 2018
             li: a(href="/") Current Month
-            li: a(href="/2018/february") February 2018
-            li: a(href="/2018/january") January 2018
-            li: a(href="/2017/december") December 2017
-            li: a(href="/2017/november") November 2017
-            li: a(href="/2017/october") October 2017
-            li: a(href="/2017/september") September 2017
-            li: a(href="/2017/august") August 2017
-            li: a(href="/2017/july") July 2017
-            li: a(href="/2017/june") June 2017
-            li: a(href="/2017/may") May 2017
-            li: a(href="/2017/april") April 2017
-            li: a(href="/2017/march") March 2017
-            li: a(href="/2017/february") February 2017
-            li: a(href="/2017/january") January 2017
+            li: a(href="/2018/february") February
+            li: a(href="/2018/january") January
+
+            li: h5 2017
+            each m in months
+              li: a(href="/2017/" + m.toLowerCase()) #{m}
 
         div.col-md-10
           table.table.table-striped
@@ -42,11 +35,11 @@ html
                 th Artist
                 th Album
             tbody
-              each album in albums
+              each a in albums
                 tr
-                  td #{album.date}
-                  td #{album.artist}
-                  if album.link
-                    td: a(href=`${album.link}`) #{album.album}
+                  td #{a.date}
+                  td #{a.artist}
+                  if a.link
+                    td: a(href=`${a.link}`) #{a.album}
                   else
-                    td #{album.album}
+                    td #{a.album}

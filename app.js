@@ -43,10 +43,26 @@ async function renderWithSpotify(res, title, month = "albums") {
     spotifyApi.setAccessToken(access.body.access_token);
     const albums = await getAlbumData(albumJson);
 
+    const months = [
+      "December",
+      "November",
+      "October",
+      "September",
+      "August",
+      "July",
+      "June",
+      "May",
+      "April",
+      "March",
+      "February",
+      "January"
+    ];
+
     res.render("list", {
       title,
       month,
-      albums
+      albums,
+      months
     });
   } catch (err) {
     res.render("error", { error: err.message });
