@@ -1,0 +1,15 @@
+table.table.table-striped
+  thead
+    tr
+      th Date
+      th Artist
+      th Album
+  tbody
+    each a in albums
+      tr
+        td #{a.date}
+        td #{a.artist}
+        if a.link
+          td: a(href=`${a.link}`) #{a.album}
+        else
+          td #{a.album}

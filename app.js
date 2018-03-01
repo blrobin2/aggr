@@ -15,6 +15,14 @@ app.use(express.static("public"));
 app.set("view engine", "pug");
 
 // Routes
+app.get('/favicon.ico', function(req, res) {
+  res.sendFile('favicon.ico', { root: __dirname + "/public" }, err => {
+    if (err) {
+      console.error(err);
+    }
+  });
+});
+
 app.get("*", function(req, res) {
   const filename = getFilenameFromUrl(req.url);
   const title = getTitle(filename);
@@ -26,7 +34,12 @@ function getFilenameFromUrl(url) {
 }
 
 function getTitle(filename) {
-  return filename ? toTitleCase(filename) : "Current Month";
+  return filename ? translateFileNameToTitle(filename) : "Current Month";
+}
+
+function translateFileNameToTitle(filename) {
+  const [year, month] = filename.split('/');
+  return `${toTitleCase(month)} ${year}`;
 }
 
 function toTitleCase(string) {
@@ -43,26 +56,19 @@ async function renderWithSpotify(res, title, month = "albums") {
     spotifyApi.setAccessToken(access.body.access_token);
     const albums = await getAlbumData(albumJson);
 
-    const months = [
-      "December",
-      "November",
-      "October",
-      "September",
-      "August",
-      "July",
-      "June",
-      "May",
-      "April",
-      "March",
-      "February",
-      "January"
-    ];
+    const months = getMonths();
+    const years = getYearsActive();
+    const currentYear = getCurrentYear();
+    const monthsSoFarThisYear = getMonthsSoFarThisYear();
 
-    res.render("list", {
+    res.render("main", {
       title,
       month,
       albums,
-      months
+      months,
+      years,
+      currentYear,
+      monthsSoFarThisYear
     });
   } catch (err) {
     res.render("error", { error: err.message });
@@ -88,6 +94,44 @@ const getJson = url =>
 
 async function getAlbumData(albumJson) {
   return await Promise.all(albumJson.map(lookup));
+}
+
+function getMonths() {
+  return [
+    "December",
+    "November",
+    "October",
+    "September",
+    "August",
+    "July",
+    "June",
+    "May",
+    "April",
+    "March",
+    "February",
+    "January"
+  ];
+}
+
+function getCurrentYear() {
+  return (new Date()).getFullYear();
+}
+
+function getYearsActive() {
+  const yearStarted = 2017;
+  let year = getCurrentYear() - 1;
+  const yearsActive = [];
+  while (year >= yearStarted) {
+    yearsActive.push(year);
+    year--;
+  }
+  return yearsActive;
+}
+
+function getMonthsSoFarThisYear() {
+  const currentMonth = (new Date()).getMonth();
+  const months = getMonths();
+  return months.slice(Math.max(months.length - currentMonth, 1));
 }
 
 function lookup(album) {

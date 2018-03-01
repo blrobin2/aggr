@@ -1,0 +1,10 @@
+ul
+  li: h5 #{currentYear}
+  li: a(href="/") Current Month
+  each m in monthsSoFarThisYear
+    li: a(href=`/${currentYear}/${m.toLowerCase()}`) #{m}
+
+  each y in years
+    li: h5 #{y}
+    each m in months
+      li: a(href=`/${y}/${m.toLowerCase()}`) #{m}
