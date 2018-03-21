@@ -73,7 +73,6 @@ const metacriticReducer = html => {
     if (parseInt(score) > 80 && cameOutThisMonth(pubDate, today)) {
       const album = getFromDom(li, ".product_title > a");
       const artist = getFromDom(li, ".product_artist > .data");
-      console.log(artist, album);
       albums.push({
         artist: cleanUp(artist),
         album: cleanUp(album),
