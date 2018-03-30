@@ -4,7 +4,7 @@ const toTitleCase = str =>
     txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
   );
 const replaceUmlats = str => {
-  const umlatReplacements = { ä: "a", â: "a", ü: "u", ö: "o", ß: "ss" };
+  const umlatReplacements = { ä: "a", â: "a", é: "e", ü: "u", ö: "o", ß: "ss" };
   return str.replace(
     new RegExp(`[${Object.keys(umlatReplacements).join()}]`, "g"),
     match => umlatReplacements[match]
