@@ -1,5 +1,5 @@
 const jsonfile = require("jsonfile");
-const _ = require("lodash");
+const { uniqWith, eqProps } = require("ramda");
 
 const writeJson = (fileName, data) =>
   new Promise((res, rej) =>
@@ -9,9 +9,11 @@ const writeJson = (fileName, data) =>
     })
   );
 
+const uniqueByAlbumName = uniqWith(eqProps('album'));
+
 const writeAlbumsToJson = albums =>
   writeJson("./public/albums.json", {
-    albums: _.uniqBy(albums, "album")
+    albums: uniqueByAlbumName(albums)
   });
 
 module.exports = { writeAlbumsToJson };

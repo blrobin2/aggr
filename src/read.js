@@ -29,7 +29,6 @@ const dom = url =>
     })
   );
 
-
 const getFromDom = (node, ...elems) => {
   let elem = node;
   elems.forEach(selector => {

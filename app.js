@@ -1,22 +1,24 @@
+require("dotenv").config();
 const path = require("path");
 const express = require("express");
 const app = express();
 const fs = require("fs");
-const _ = require("lodash");
+const R = require("ramda");
 const SpotifyWebApi = require("spotify-web-api-node");
-const config = require("config");
+
+const { toTitleCase } = require("./src/stringCleanUp");
 
 const spotifyApi = new SpotifyWebApi({
-  clientId: config.get("spotifyClientId"),
-  clientSecret: config.get("spotifyClientSecret")
+  clientId: process.env.SPOTIFY_CLIENT_ID,
+  clientSecret: process.env.SPOTIFY_CLIENT_SECRET
 });
 
 app.use(express.static("public"));
 app.set("view engine", "pug");
 
 // Routes
-app.get('/favicon.ico', function(req, res) {
-  res.sendFile('favicon.ico', { root: __dirname + "/public" }, err => {
+app.get("/favicon.ico", function(req, res) {
+  res.sendFile("favicon.ico", { root: __dirname + "/public" }, err => {
     if (err) {
       console.error(err);
     }
@@ -38,12 +40,8 @@ function getTitle(filename) {
 }
 
 function translateFileNameToTitle(filename) {
-  const [year, month] = filename.split('/');
+  const [year, month] = filename.split("/");
   return `${toTitleCase(month)} ${year}`;
-}
-
-function toTitleCase(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 async function renderWithSpotify(res, title, month = "albums") {
@@ -71,6 +69,7 @@ async function renderWithSpotify(res, title, month = "albums") {
       monthsSoFarThisYear
     });
   } catch (err) {
+    console.trace(err);
     res.render("error", { error: err.message });
   }
 }
@@ -83,10 +82,9 @@ const getJson = url =>
         return;
       }
       res(
-        _.orderBy(
-          JSON.parse(content).albums,
-          ["date", "artist"],
-          ["desc", "asc"]
+        R.sortWith(
+          [R.descend(R.prop("date")), R.ascend(R.prop("artist"))],
+          JSON.parse(content).albums
         )
       );
     })
@@ -114,7 +112,7 @@ function getMonths() {
 }
 
 function getCurrentYear() {
-  return (new Date()).getFullYear();
+  return new Date().getFullYear();
 }
 
 function getYearsActive() {
@@ -129,12 +127,12 @@ function getYearsActive() {
 }
 
 function getMonthsSoFarThisYear() {
-  const currentMonth = (new Date()).getMonth();
+  const currentMonth = new Date().getMonth();
   const months = getMonths();
   return months.slice(Math.max(months.length - currentMonth, 1));
 }
 
-function lookup(album) {
+async function lookup(album) {
   return spotifyApi.searchAlbums(`${album.artist} ${album.album}`).then(
     lookup =>
       lookup.body.albums.items.length

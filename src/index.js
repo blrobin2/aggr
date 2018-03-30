@@ -1,4 +1,3 @@
-
 const { getAllReviews } = require("./reviews");
 const { writeAlbumsToJson } = require("./write");
 

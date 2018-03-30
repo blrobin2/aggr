@@ -1,3 +1,4 @@
+const { flatten } = require("ramda");
 const { dom } = require("./read");
 const {
   pitchforkReducer,
@@ -30,7 +31,7 @@ const getAllReviews = async () => {
     getMetacriticReviews(),
     getStereogumReviews()
   ]);
-  return allReviews.reduce((arr, reviews) => arr.concat(reviews));
+  return flatten(allReviews);
 };
 
 module.exports = {
