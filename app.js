@@ -18,7 +18,7 @@ app.set("view engine", "pug");
 
 // Routes
 app.get("/favicon.ico", function(req, res) {
-  res.sendFile("favicon.ico", { root: __dirname + "/public" }, err => {
+  res.sendFile("favicon.ico", { root: path.join(__dirname, "public") }, err => {
     if (err) {
       console.error(err);
     }
@@ -54,19 +54,14 @@ async function renderWithSpotify(res, title, month = "albums") {
     spotifyApi.setAccessToken(access.body.access_token);
     const albums = await getAlbumData(albumJson);
 
-    const months = getMonths();
-    const years = getYearsActive();
-    const currentYear = getCurrentYear();
-    const monthsSoFarThisYear = getMonthsSoFarThisYear();
-
     res.render("main", {
       title,
       month,
       albums,
-      months,
-      years,
-      currentYear,
-      monthsSoFarThisYear
+      months: getMonths(),
+      years: getYearsActive(),
+      currentYear: getCurrentYear(),
+      monthsSoFarThisYear: getMonthsSoFarThisYear()
     });
   } catch (err) {
     console.trace(err);

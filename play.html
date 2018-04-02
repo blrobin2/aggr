@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Play with Ramda</title>
+</head>
+<body>
+  <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ullam ipsam iusto consequatur incidunt obcaecati eius aliquam, tenetur voluptates repellendus in quis quas dolorum modi et voluptate, ea suscipit! Aliquam, voluptatibus?</p>
+
+  <p>Lorem ipsum, <a>dolor sit amet consectetur</a>a adipisicing elit. Molestias molestiae enim quae aliquam ad, sint nesciunt iusto earum dicta ducimus aliquid, dolorem delectus fugit veniam, quasi perferendis voluptate reprehenderit esse!</p>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.18.0/ramda.min.js"></script>
+  <script>
+    const cssQuery = R.invoker(1, 'querySelectorAll');
+    const setStyle = R.assoc('style');
+
+    R.pipe(
+      cssQuery('a, p'),
+      R.map(setStyle({ color: 'red' }))
+    )(document)
+  </script>
+</body>
+</html>
