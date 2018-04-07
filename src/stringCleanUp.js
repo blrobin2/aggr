@@ -1,27 +1,38 @@
-const { compose } = require("ramda");
+const {
+  compose,
+  join,
+  keys,
+  lensIndex,
+  of,
+  over,
+  prop,
+  replace,
+  toUpper
+} = require("ramda");
 
-const toTitleCase = str =>
-  str.replace(
-    /\w\S*/g,
-    txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+const toTitleCase = replace(
+  /\w\S*/g,
+  compose(join(""), over(lensIndex(0), toUpper))
+);
+
+const replaceUmlats = (replacements => {
+  return replace(new RegExp(of(join(keys(replacements))), "g"), match =>
+    prop(match, replacements)
   );
-const replaceUmlats = str => {
-  const umlatReplacements = {
-    ä: "a",
-    â: "a",
-    é: "e",
-    è: "e",
-    ü: "u",
-    ö: "o",
-    ß: "ss"
-  };
-  return str.replace(
-    new RegExp(`[${Object.keys(umlatReplacements).join()}]`, "g"),
-    match => umlatReplacements[match]
-  );
-};
-const removeSpecialChars = str =>
-  str.replace(/[^\w\s&amp;]/gi, "").replace(/\B&amp;\B/gi, "&");
+})({
+  ä: "a",
+  â: "a",
+  é: "e",
+  è: "e",
+  ü: "u",
+  ö: "o",
+  ß: "ss"
+});
+
+const removeSpecialChars = compose(
+  replace(/\B&amp;\B/gi, "&"),
+  replace(/[^\w\s&amp;]/gi, "")
+);
 
 const cleanUp = compose(toTitleCase, removeSpecialChars, replaceUmlats);
 

@@ -1,3 +1,5 @@
+const R = require("ramda");
+
 const { cleanUp } = require("./stringCleanUp");
 const {
   getToday,
@@ -43,23 +45,33 @@ const pitchforkReducer = (results, collection) =>
     return acc;
   }, []);
 
-const stereogumReucer = items =>
-  items.reduce((acc, item) => {
-    const pubDate = getPubDate(item);
+const getArtistAndAlbumStereogum = R.compose(
+  R.split(" - "),
+  R.head,
+  R.prop("title")
+);
 
-    if (cameOutThisMonth(pubDate, today)) {
-      const [artist, album] = item.title[0].split(" – ");
-      if (album) {
-        return acc.concat({
-          artist: cleanUp(artist),
-          album: cleanUp(album),
-          date: dateString(pubDate)
-        });
-      }
-    }
+const checkAlbumStereogum = R.ifElse(
+  () => cameOutThisMonth(getPubDate(R.__), today),
+  () => {
+    const [artist, album] = getArtistAndAlbumStereogum(R.__);
+    return album
+      ? [
+          {
+            artist: cleanUp(artist),
+            album: cleanUp(album),
+            date: getPubDate(R.__)
+          }
+        ]
+      : [];
+  },
+  R.always([])
+);
 
-    return acc;
-  }, []);
+const stereogumReducer = R.reduce(
+  (acc, album) => R.concat(checkAlbumStereogum(album), acc),
+  []
+);
 
 const metacriticReducer = html => {
   const albums = [];
@@ -86,6 +98,6 @@ const metacriticReducer = html => {
 
 module.exports = {
   pitchforkReducer,
-  stereogumReucer,
+  stereogumReducer,
   metacriticReducer
 };

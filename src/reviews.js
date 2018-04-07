@@ -2,7 +2,7 @@ const { flatten } = require("ramda");
 const { dom } = require("./read");
 const {
   pitchforkReducer,
-  stereogumReucer,
+  stereogumReducer,
   metacriticReducer
 } = require("./reducers");
 const { collectReviews, collectReviewsAndScores } = require("./collectors");
@@ -22,7 +22,7 @@ const getPitchforkReviews = () =>
 const getStereogumReviews = () =>
   collectReviews(
     "https://www.stereogum.com/heavy-rotation/feed/",
-    stereogumReucer
+    stereogumReducer
   );
 
 const getAllReviews = async () => {
