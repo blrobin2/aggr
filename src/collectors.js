@@ -1,24 +1,23 @@
+const { compose, head, map, path, prop } = require("ramda");
 const { xml, dom } = require("./read");
 
-const items = xmlObj => xmlObj.rss.channel[0].item;
-const getUrlPromise = item => dom(item.link[0]);
+const items = compose(prop("item"), head, path(["rss", "channel"]));
+const getUrlPromise = compose(dom, head, prop("link"));
 
 const collectReviewsAndScores = (url, reducer) =>
-  xml(url).then(xmlObj => {
-    const collection = items(xmlObj);
-    const urlPromises = collection.map(getUrlPromise);
-
-    return Promise.all(urlPromises).then(results =>
-      reducer(results, collection)
-    );
-  }, console.error);
+  xml(url).then(
+    xmlObj =>
+      Promise.all(map(getUrlPromise, items(xmlObj))).then(results =>
+        reducer(results, items(xmlObj))
+      ),
+    console.error
+  );
 
 const collectReviews = (url, reducer) =>
-  xml(url).then(xmlObj => {
-    const collection = items(xmlObj);
-
-    return Promise.resolve(collection).then(reducer);
-  }, console.error);
+  xml(url).then(
+    xmlObj => Promise.resolve(items(xmlObj)).then(reducer),
+    console.error
+  );
 
 module.exports = {
   collectReviews,
