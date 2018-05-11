@@ -22,6 +22,7 @@ const replaceUmlats = (replacements => {
 })({
   ä: "a",
   â: "a",
+  ã: "a",
   é: "e",
   è: "e",
   ü: "u",
