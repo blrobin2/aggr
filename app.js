@@ -5,6 +5,7 @@ const app = express();
 const fs = require("fs");
 const R = require("ramda");
 const SpotifyWebApi = require("spotify-web-api-node");
+const { MongoClient } = require('mongodb');
 
 const { toTitleCase } = require("./src/stringCleanUp");
 
@@ -53,6 +54,10 @@ async function renderWithSpotify(res, title, month = "albums") {
 
     spotifyApi.setAccessToken(access.body.access_token);
     const albums = await getAlbumData(albumJson);
+
+    console.log(albums);
+
+    // await writeAlbumsToMongo(albums);
 
     res.render("main", {
       title,
@@ -132,10 +137,25 @@ async function lookup(album) {
     lookup =>
       lookup.body.albums.items.length
         ? Object.assign({}, album, {
-            link: lookup.body.albums.items[0].external_urls.spotify
+            link: lookup.body.albums.items[0].external_urls.spotify,
+            artwork: lookup.body.albums.items[0].images[0].url
           })
         : Object.assign({}, album)
   );
+}
+
+async function writeAlbumsToMongo(albums) {
+  const getUri = (admin, password) => `mongodb+srv://${admin}:${password}@cluster0-mv18n.mongodb.net/reviews?retryWrites=true&w=majority`;
+
+  const uri = getUri(process.env.MONGO_ADMIN, process.env.MONGO_PASSWORD);
+  const client = await MongoClient(uri, { useNewUrlParser: true }).connect();
+  const colllection = client.db(process.env.MONGO_DB).collection('recommended');
+  const deleted = await colllection.deleteMany({});
+  console.log(deleted);
+
+  // await db.collection('recommended').insertMany(albums);
+
+  client.close();
 }
 
 app.listen(process.env.PORT || 8080);
