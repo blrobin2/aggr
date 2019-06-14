@@ -55,9 +55,7 @@ async function renderWithSpotify(res, title, month = "albums") {
     spotifyApi.setAccessToken(access.body.access_token);
     const albums = await getAlbumData(albumJson);
 
-    console.log(albums);
-
-    // await writeAlbumsToMongo(albums);
+    await writeAlbumsToMongo(albums);
 
     res.render("main", {
       title,
@@ -149,12 +147,9 @@ async function writeAlbumsToMongo(albums) {
 
   const uri = getUri(process.env.MONGO_ADMIN, process.env.MONGO_PASSWORD);
   const client = await MongoClient(uri, { useNewUrlParser: true }).connect();
-  const colllection = client.db(process.env.MONGO_DB).collection('recommended');
-  const deleted = await colllection.deleteMany({});
-  console.log(deleted);
-
-  // await db.collection('recommended').insertMany(albums);
-
+  const collection = client.db(process.env.MONGO_DB).collection('recommended');
+  await collection.deleteMany({});
+  await collection.insertMany(albums);
   client.close();
 }
 
