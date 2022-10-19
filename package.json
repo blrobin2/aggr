@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "async": "^2.4.1",
+    "async": "^2.6.4",
     "concat-stream": "^1.6.0",
     "dotenv": "^5.0.1",
     "express": "^4.14.0",
@@ -24,9 +24,9 @@
     "jsonfile": "^2.4.0",
     "mongodb": "^3.2.7",
     "progress": "^1.1.8",
-    "pug": "^2.0.0-beta10",
-    "ramda": "^0.25.0",
-    "spotify-web-api-node": "^2.4.0",
+    "pug": "^3.0.1",
+    "ramda": "^0.27.2",
+    "spotify-web-api-node": "^4.0.0",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
