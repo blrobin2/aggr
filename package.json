@@ -20,11 +20,11 @@
     "dotenv": "^5.0.1",
     "express": "^4.14.0",
     "fluture": "^8.0.2",
-    "jsdom": "^9.9.1",
+    "jsdom": "^22.0.0",
     "jsonfile": "^2.4.0",
     "mongodb": "^3.2.7",
     "progress": "^1.1.8",
-    "pug": "^3.0.1",
+    "pug": "^3.0.3",
     "ramda": "^0.27.2",
     "spotify-web-api-node": "^4.0.0",
     "xml2js": "^0.4.17"
